@@ -3,6 +3,8 @@ package edu.mum.cs.cs425.demos.elibrarydemocrudweb.controller;
 import edu.mum.cs.cs425.demos.elibrarydemocrudweb.model.Book;
 import edu.mum.cs.cs425.demos.elibrarydemocrudweb.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,7 +27,9 @@ public class BookController {
     @GetMapping(value = {"/elibrary/book/list"})
     public ModelAndView listBooks(@RequestParam(defaultValue = "0") int pageno) {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("books", bookService.getAllBooksPaged(pageno));
+        Page<Book> books = bookService.getAllBooksPaged(pageno);
+        modelAndView.addObject("books", books);
+        modelAndView.addObject("booksCount", books.getSize());
         modelAndView.addObject("currentPageNo", pageno);
         modelAndView.setViewName("book/list");
         return modelAndView;
@@ -76,9 +80,12 @@ public class BookController {
     }
 
     @RequestMapping(value = "/elibrary/book/search", method = RequestMethod.GET)
-    public ModelAndView showBooksByTitle(@RequestParam(value = "title", required = false) String title, @RequestParam(defaultValue = "0") int pageno, Model model) {
+    public ModelAndView showBooksByTitle(@RequestParam String searchString, @RequestParam(defaultValue = "0") int pageno, Model model) {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("books", bookService.listBooksByTitle(title, pageno));
+        Page<Book> books = bookService.searchBooks(searchString, pageno);
+        modelAndView.addObject("books", books);
+        modelAndView.addObject("searchString", searchString);
+        modelAndView.addObject("booksCount", books.getContent().size());
         modelAndView.addObject("currentPageNo", pageno);
         modelAndView.setViewName("book/list");
         return modelAndView;

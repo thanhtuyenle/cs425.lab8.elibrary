@@ -19,6 +19,6 @@ public interface BookService {
 
     public abstract Optional<Book> findByISBN(String isbn);
 
-    public abstract Page<Book> listBooksByTitle(String title, int pageNo);
+    public abstract Page<Book> searchBooks(String searchString, int pageNo);
 
 }

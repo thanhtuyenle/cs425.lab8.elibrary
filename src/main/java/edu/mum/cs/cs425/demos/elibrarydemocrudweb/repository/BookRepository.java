@@ -9,6 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
@@ -20,4 +21,10 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     @Query("Select b from Book b where b.title like %:title%")
     Page<Book> findByTitle(String title, Pageable pageable);
+    //List<Book> findBooksByTitleContainsOrIsbnContainsOrOverdueFeeContainsOrPublisherContainsOrDatePublishedContainsOrderByTitle(String searchString);
+    Page<Book> findAllByIsbnContainingOrTitleContainingOrPublisherContainingOrderByTitle(String isbn,
+                                                                                         String title,
+                                                                                         String pub, Pageable pageable);
+    Page<Book> findAllByOverdueFeeEquals(Double overdueFee, Pageable pageable);
+    Page<Book> findAllByDatePublishedEquals(LocalDate datePublished, Pageable pageable);
 }
